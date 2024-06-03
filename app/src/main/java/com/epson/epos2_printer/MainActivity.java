@@ -35,7 +35,11 @@ import java.util.ArrayList;
 
 /**
  * test
- * epson的底层已经为我们封装了printer方法，里面很多需要通过指令集操作的都被一一封装成了逐一的方法。详情请看打印
+ * The bottom layer of epson has encapsulated the printer method for us,
+ * and many of the methods that need to be operated through the instruction set
+ * have been encapsulated into methods one by one.
+ * Please see print for details
+ *
  */
 public class MainActivity extends Activity implements View.OnClickListener, ReceiveListener {
     ReceiptPrinter receiptPrinter;
@@ -47,7 +51,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
     private Printer mPrinter = null;
 
     /**
-     * USB打印机是否连接
+     * Whether the USB printer is connected
      */
     public static boolean isConnectUsbPrint;
 
@@ -132,7 +136,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
 
 
     /**
-     * 在onResume()方法注册广播
+     * Register broadcast in onResume() method
      */
     @Override
     protected void onResume() {
@@ -143,11 +147,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
     }
 
     /**
-     * onPause()方法注销广播
+     * onPause() method cancels broadcast
      */
     @Override
     protected void onPause() {
-        // USB监听广播
+        // USB monitoring broadcast
         if (usbReceiver != null) {
             unregisterReceiver(usbReceiver);
         }
@@ -155,10 +159,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
         super.onPause();
     }
 
-// TODO: 2018/6/29 在 USB 连接的广播监听中做 搜寻打印机的处理  比较合适
+// TODO: 2018/6/29 It is more appropriate to do the process of searching for printers in USB-connected broadcast monitoring.
 
     /**
-     * 注册监听USB连接状态
+     * Register to monitor USB connection status
      */
     private void registerUsbReceiver() {
         IntentFilter usbDeviceStateFilter = new IntentFilter();
@@ -171,17 +175,17 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            //已连接
+            //connected
             if (action.equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
 
-                Toast.makeText(context, "USB 已經連接", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "USB already connected", Toast.LENGTH_SHORT).show();
 
                 isConnectUsbPrint = true;
 
                 FilterOption mFilterOption = new FilterOption();
                 mFilterOption.setDeviceType(Discovery.TYPE_PRINTER);
                 mFilterOption.setEpsonFilter(Discovery.FILTER_NAME);
-                mFilterOption.setPortType(Discovery.PORTTYPE_USB);//开启此方式可以过滤掉当前网络中的其它TCP 印机， //只search USB
+                mFilterOption.setPortType(Discovery.PORTTYPE_USB);//Turning on this method can filter out other TCP printers in the current network， //only search USB
 
                 try {
                     Discovery.start(MainActivity.this, mFilterOption, new DiscoveryListener() {
@@ -191,11 +195,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
 //                    item.put("Target", deviceInfo.getTarget());
                             printerTarget = deviceInfo.getTarget();
 
-                            //这里可以将 printerTarget 写入 SP 中，打印时从 SP 获取 此 进行连接； 搜索成功后 建议弹出Toast 提醒。
+                            //Here you can write the printerTarget into the SP, and get this from the SP for connection when printing;
+                            // after the search is successful, it is recommended to pop up a Toast reminder.
                             android.util.Log.d("target:", printerTarget);
 
                          /*
-                           //不建议停止
+                           //Not recommended to stop
                            try {
                                 if (!TextUtils.isEmpty(printerTarget)) {
                                     Discovery.stop();
@@ -214,7 +219,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
 
             }
             if (action.equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
-                Toast.makeText(context, "USB 已經斷開", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "USB has been disconnected", Toast.LENGTH_SHORT).show();
 
                 isConnectUsbPrint = false;
 
@@ -229,7 +234,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
 
 
     /**
-     * 获取打印的目标对象
+     * Get the printed target object
      */
     @Override
     protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
@@ -255,7 +260,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
 
             case R.id.btnSampleReceipt:
                 updateButtonState(false);
-                //打印收据文本
+                //Print receipt text
                 if (!runPrintReceiptSequence()) {
                     updateButtonState(true);
                 }
@@ -263,7 +268,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
 
             case R.id.btnSampleCoupon:
                 updateButtonState(false);
-                //打印优惠卷 图片
+                //Print Coupon Picture
                 if (!runPrintCouponSequence()) {
                     updateButtonState(true);
                 }
@@ -276,16 +281,16 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
     }
 
     private boolean runPrintReceiptSequence() {
-        /* 初始化对象 */
+        /* initialize object */
         if (!initializeObject()) {
             return false;
         }
-        /* 创建打印 数据 */
+        /* Create print data */
         if (!createReceiptData()) {
             finalizeObject();
             return false;
         }
-        /*打印*/
+        /* print */
         if (!printData()) {
             finalizeObject();
             return false;
@@ -307,14 +312,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
         }
 
         try {
-            //语言需要
-            mPrinter.addTextLang(Printer.LANG_ZH_TW);////繁体字符集BIG5  中文 GBK
+            //language requirements
+            mPrinter.addTextLang(Printer.LANG_ZH_TW);////Traditional character set BIG5 Chinese GBK
             method = "addTextAlign";
             mPrinter.addTextAlign(Printer.ALIGN_CENTER);
             mPrinter.addTextSize(Printer.PARAM_DEFAULT, Printer.PARAM_DEFAULT);
 
  /*           method = "addImage";
-            //打印添加一个bitmap图片
+            //Print and add a bitmap image
           */
             mPrinter.addImage(logoData, 0, 0,
                     logoData.getWidth(),
@@ -326,7 +331,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
                     Printer.COMPRESS_AUTO);
 
             method = "addFeedLine";
-            mPrinter.addFeedLine(1);//添加一行
+            mPrinter.addFeedLine(1);//feed one line
             textData.append("THE STORE 123 (555) 555 – 5555\n");
             textData.append("STORE DIRECTOR – John Smith\n");
             textData.append("\n");
@@ -335,7 +340,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
             textData.append("------------------------------\n");
             method = "addText";
             mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length()); //添加完之前加入的内容后删除
+            textData.delete(0, textData.length()); //Delete after adding previously added content
             textData.append("400 OHEIDA 3PK SPRINGF  9.99 R\n");
             textData.append("410    9.99 R\n");
             textData.append("445 EMERIL /PAN 17.99 R\n");
@@ -359,13 +364,13 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
             textData.delete(0, textData.length());
 
             method = "addTextSize";
-            mPrinter.addTextSize(2, 2);//打印下一个字符集的时候定义字体大小
+            mPrinter.addTextSize(2, 2);//Define the font size when printing the next character set
             method = "addText";
             mPrinter.addText("TOTAL    174.81\n");
             method = "addTextSize";
-            mPrinter.addTextSize(1, 1);//继续以默认字体继续打印以下内容
+            mPrinter.addTextSize(1, 1);//Continue printing the following content in the default font
             method = "addFeedLine";
-            mPrinter.addFeedLine(1);//空一行
+            mPrinter.addFeedLine(1);//skip a line
 
 
             textData.append("CASH     200.00\n");
@@ -380,13 +385,15 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
             textData.append("With Preferred Saving Card\n");
             method = "addText";
             mPrinter.addText(textData.toString());
-            mPrinter.addText("发达的完全放弃");
+            mPrinter.addText("Give up selected");
             textData.delete(0, textData.length());
             method = "addFeedLine";
             mPrinter.addFeedLine(2);
 
             method = "addBarcode";
-            //BARCODE_CODE39 类型 数字长度为11～15  ；HRI_BELOW 位置  ;字体还是FONT_A默认大小最好看,FONT_C 小一点
+            //BARCODE_CODE39 type number length is 11~15;
+            // HRI_BELOW position; the font is still the best-looking default size of FONT_A,
+            // FONT_C is smaller
             mPrinter.addBarcode("012094578902215",
                     Printer.BARCODE_CODE39,
                     Printer.HRI_BELOW,
@@ -394,9 +401,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
                     2,
                     100); //Width:2 to 6 ; Height:1 to 255
 
-            mPrinter.addFeedLine(2);//空两行
+            mPrinter.addFeedLine(2);//skip 2 lines
             method = "addCut";
-            mPrinter.addCut(Printer.CUT_FEED);//裁切命令
+            mPrinter.addCut(Printer.CUT_FEED);//Crop command
 
         } catch (Exception e) {
             ShowMsg.showException(e, method, mContext);
@@ -435,7 +442,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
         final int barcodeWidth = 2;
         final int barcodeHeight = 64;
         /**
-         * 页面区域宽高
+         * Page area width and height
          * */
         final int pageAreaHeight = 500;
         final int pageAreaWidth = 500;
@@ -443,7 +450,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
         final int fontAWidth = 12;
 
         /**
-         * 条形码宽高定义
+         * Barcode width and height
          * */
         final int barcodeWidthPos = 110;
         final int barcodeHeightPos = 70;
@@ -511,26 +518,26 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
     }
 
     /**
-     * 打印数据
+     * Print data
      */
     private boolean printData() {
         if (mPrinter == null) {
             return false;
         }
-        //连接打印设备
+        //Connect a printing device
         if (!connectPrinter()) {
             return false;
         }
-        //当前的打印状态
+        //Current printing status
         PrinterStatusInfo status = mPrinter.getStatus();
 
         dispPrinterWarnings(status);
 
-        //打印机不可用时弹窗提示
+        //Pop-up prompt when printer is unavailable
         if (!isPrintable(status)) {
             ShowMsg.showMsg(makeErrorMessage(status), mContext);
             try {
-                //断开
+                //disconnect
                 mPrinter.disconnect();
             } catch (Exception ex) {
                 // Do nothing
@@ -539,7 +546,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
         }
 
         try {
-            //通过打印对象发送已经添加在mPrinter中的数据
+            //Send data already added in mPrinter via print object
             mPrinter.sendData(Printer.PARAM_DEFAULT);
         } catch (Exception e) {
             ShowMsg.showException(e, "sendData", mContext);
@@ -555,7 +562,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
     }
 
     /**
-     * 初始化打印对象  返回true 是否生成
+     * Initialize the printing object and return true whether to generate
      */
     private boolean initializeObject() {
         try {
@@ -575,7 +582,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
     }
 
     /**
-     * 完成打印，清空命令缓冲，关闭释放打印对象
+     * Complete printing, clear the command buffer, close and release the print object
      */
     private void finalizeObject() {
         if (mPrinter == null) {
@@ -590,7 +597,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
     }
 
     /**
-     * 连接打印机
+     * Connect printer
      *
      * @return
      */
@@ -602,7 +609,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
         }
 
         try {
-            //连接 USB设备地址我的 EPSON TM-T88IV型号地址: USB:/dev/bus/usb/004/002  必须通过开启搜索设备设置连接机型
+            //Connection USB device address
+            // My EPSON TM-T88IV model address: USB:/dev/bus/usb/004/002
+            // You must connect the model by opening the search device settings
 //            mPrinter.connect(mEditTarget.getText().toString(), Printer.PARAM_DEFAULT);
             mPrinter.connect(MainActivity.getPrinterTarget(), Printer.PARAM_DEFAULT);
         } catch (Exception e) {
@@ -631,7 +640,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
 
 
     /**
-     * 断开当前打印
+     * End current transaction
      */
     private void disconnectPrinter() {
         if (mPrinter == null) {
@@ -664,7 +673,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
     }
 
     /**
-     * 打印是否可用
+     * Whether printing is available?
      */
     private boolean isPrintable(PrinterStatusInfo status) {
         if (status == null) {
@@ -683,7 +692,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
     }
 
     /**
-     * 错误信息
+     * Error Message
      */
     private String makeErrorMessage(PrinterStatusInfo status) {
         String msg = "";
@@ -735,7 +744,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
     }
 
     /**
-     * 打印机警告
+     * Printer warnings
      */
     private void dispPrinterWarnings(PrinterStatusInfo status) {
         EditText edtWarnings = (EditText) findViewById(R.id.edtWarnings);
@@ -757,7 +766,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
     }
 
     /**
-     * 更新button状态
+     * Update button state
      */
     private void updateButtonState(boolean state) {
         Button btnReceipt = (Button) findViewById(R.id.btnSampleReceipt);
@@ -768,7 +777,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
 
 
     /**
-     * 打印结果监听
+     * Print result monitoring
      */
     @Override
     public void onPtrReceive(final Printer printerObj, final int code, final PrinterStatusInfo status, final String printJobId) {
@@ -784,7 +793,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Rece
 //                new Thread(new Runnable() {
 //                    @Override
 //                    public void run() {
-                //执行完之后断开当前打印
+                //After execution, disconnect the current printing
                 disconnectPrinter();
 //                    }
 //                }).start();

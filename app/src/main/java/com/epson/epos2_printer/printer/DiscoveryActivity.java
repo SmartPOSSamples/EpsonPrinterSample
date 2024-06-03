@@ -21,15 +21,18 @@ import com.epson.epos2.Epos2Exception;
 import com.epson.epos2_printer.R;
 
 /**
- * 查询可用印机器，USB连接 或 IP连接 ，获取名称target即可
+ * Query the available printing machines, USB connection or IP connection, and get the target name.
  * <p>
- * 1、如果植入你的App时最好把开启搜索的代码 放入USB广播监听中，获取到target之后记录
- * 不同的印机USB名称不同，规则：USB:/dev/bus/usb/001/002
+ * 1. When implanting your app, it is best to put the code that enables search into the USB broadcast monitor,
+ * and record it after obtaining the target.
+ *  Different printers have different USB names. The rule is: USB:/dev/bus/usb/001/002
  * <p>
- * 2、局域网内也可以使用IP打印， target名称为IP地址规则： TCP:192.168.90.66
+ * 2. IP printing can also be used in the LAN. The target name is the IP address rule: TCP:192.168.90.66
  *
- * 3、或者將搜索的代码放在Application中 或者 MainActivity 中执行，这里有时候如果开启了网络印机 也会查询到，
- *  这里如果只连接USB则可以加个检索判断 deviceInfo.getTarget().startsWith("USB") ，或者单独只搜索USB 进行弹 Toast 提醒
+ * 3. Or put the search code in Application or MainActivity and execute it.
+ * Sometimes, if the network printer is turned on, it will also be queried.
+ *  If you only connect USB here, you can add a search judgment deviceInfo.getTarget().startsWith("USB"),
+ *  or you can only search USB for Toast reminder.
  */
 public class DiscoveryActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
