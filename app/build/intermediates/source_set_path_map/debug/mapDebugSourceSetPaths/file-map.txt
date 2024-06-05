@@ -1,7 +1,0 @@
-com.epson.epos2_printer.app-pngs-0 /home/tiana/Downloads/wizarpos/EpsonPrinterSample/app/build/generated/res/pngs/debug
-com.epson.epos2_printer.app-resValues-1 /home/tiana/Downloads/wizarpos/EpsonPrinterSample/app/build/generated/res/resValues/debug
-com.epson.epos2_printer.app-packageDebugResources-2 /home/tiana/Downloads/wizarpos/EpsonPrinterSample/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
-com.epson.epos2_printer.app-packageDebugResources-3 /home/tiana/Downloads/wizarpos/EpsonPrinterSample/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
-com.epson.epos2_printer.app-debug-4 /home/tiana/Downloads/wizarpos/EpsonPrinterSample/app/build/intermediates/merged_res/debug/mergeDebugResources
-com.epson.epos2_printer.app-debug-5 /home/tiana/Downloads/wizarpos/EpsonPrinterSample/app/src/debug/res
-com.epson.epos2_printer.app-main-6 /home/tiana/Downloads/wizarpos/EpsonPrinterSample/app/src/main/res
