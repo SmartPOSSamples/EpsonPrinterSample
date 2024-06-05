@@ -11,7 +11,7 @@ import com.epson.epos2_printer.printer.ShowMsg;
 
 /**
  * @author thisfeng
- * @date 2017/12/19-6:21 PM
+ * @date 2017/12/19-下午6:21
  */
 
 public class App extends Application {

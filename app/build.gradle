@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "com.epson.epos2_printer"
     compileSdkVersion 28
 
     defaultConfig {
@@ -12,8 +11,9 @@ android {
         versionName "1.0"
 
         ndk {
-            abiFilters 'armeabi' //, 'x86', ' 'x86_64', 'arm64-v8a'//If your device has other architectures, it will not be added by default, otherwise an error will occur
+            abiFilters 'armeabi' //, 'x86', ' 'x86_64', 'arm64-v8a'//如果你设备其它架构，默认不添加，否则会出错
         }
+
     }
     buildTypes {
         release {
@@ -43,6 +43,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     implementation files('libs/ePOS2.jar')
 }
