@@ -13,9 +13,9 @@ import com.epson.epos2_printer.R;
 
 /**
  * @author thisfeng
- * @date 2017/12/22-上午9:59
+ * @date 2017/12/22-9:59AM
  * <p>
- * 封装的打印类
+ * Encapsulated printing class
  */
 
 public class ReceiptPrinter implements ReceiveListener {
@@ -31,7 +31,8 @@ public class ReceiptPrinter implements ReceiveListener {
     }
 
     /**
-     * 这种方式采用双锁机制，安全且在多线程情况下能保持高性能
+     * This method uses a double lock mechanism,
+     * which is safe and can maintain high performance in multi-threaded situations.
      */
     public static ReceiptPrinter getInstance() {
         if (instance == null) {
@@ -46,21 +47,21 @@ public class ReceiptPrinter implements ReceiveListener {
 
     public void runPrintReceiptSequence(Context context, String datas) {
         mContext = context;
-        /* 初始化对象 */
+        /* initialize object */
         if (!initializeObject()) {
         }
-        /* 创建打印 数据 */
+        /* Create print data */
         if (!createReceiptData(datas)) {
             finalizeObject();
         }
-        /*打印*/
+        /*print*/
         if (!printData()) {
             finalizeObject();
         }
     }
 
     /**
-     * 初始化打印对象  返回true 是否生成
+     * Initialize the printing object and return true whether to generate
      */
     private boolean initializeObject() {
         try {
@@ -80,7 +81,7 @@ public class ReceiptPrinter implements ReceiveListener {
     }
 
     /**
-     * 打印结果监听
+     * Print result monitoring
      */
     @Override
     public void onPtrReceive(final Printer printerObj, final int code, final PrinterStatusInfo status, final String printJobId) {
@@ -92,7 +93,7 @@ public class ReceiptPrinter implements ReceiveListener {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        //执行完之后断开当前打印
+                        //Disconnect current printing after execution
                         disconnectPrinter();
                     }
                 }).start();
@@ -105,14 +106,14 @@ public class ReceiptPrinter implements ReceiveListener {
         String method = "";
 //        Bitmap logoData = BitmapFactory.decodeResource(getResources(), R.drawable.store);
 
-        StringBuffer textData = new StringBuffer("BIG5");//繁体字符集BIG5  中文 GBK
+        StringBuffer textData = new StringBuffer("BIG5");//Traditional character set BIG5 Chinese GBK
 
 
         if (mPrinter == null) {
             return false;
         }
         try {
-            //语言需要
+            //Language requirements
             textData.append(datas);
 
 
@@ -127,17 +128,17 @@ public class ReceiptPrinter implements ReceiveListener {
 
             mPrinter.addText(datas);
 
-            //2D符號  二維碼MODEL_2才能掃碼識別  寬 3 to 16 ，默認3  高1～255  Size：0～65535
+            //2D symbol QR code MODEL_2 can be scanned and recognized. Width 3 to 16, default 3 Height 1～255 Size: 0～65535
             mPrinter.addSymbol("12321421", Printer.SYMBOL_QRCODE_MODEL_2, Printer.PARAM_DEFAULT, 9, 9, 0);
-            //空1行
+            //skip a line
             mPrinter.addFeedLine(1);
-            mPrinter.addText("在線訂座入座終端編號2    174.81\n");
-            //空5行
+            mPrinter.addText("Online reservation terminal number 2    174.81\n");
+            //skip 5 lines
             mPrinter.addFeedLine(5);
 
 
 /*
-            //條形碼
+            //barcode
              mPrinter.addBarcode("012345678902",
                         Printer.BARCODE_UPC_A,
                         Printer.HRI_BELOW,
@@ -162,14 +163,15 @@ public class ReceiptPrinter implements ReceiveListener {
                         Printer.FONT_D,
                         2,
                         100); //Width:2 to 6 ; Height:1 to 255
-                //BARCODE_CODE39 类型 数字长度为11～15  ；HRI_BELOW 位置  ;字体还是FONT_A默认大小最好看,FONT_C 小一点
+                //BARCODE_CODE39 type number length is 11~15; HRI_BELOW position;
+                the font is still the best-looking default size of FONT_A, FONT_C is smaller
                 mPrinter.addBarcode("012094578902215",
                         Printer.BARCODE_CODE39,
                         Printer.HRI_BELOW,
                         Printer.FONT_A,
                         2,
                         100); //Width:2 to 6 ; Height:1 to 255
-                mPrinter.addText("力亨營業數" + "\n");
+                mPrinter.addText("Liheng sales number" + "\n");
                 mPrinter.addFeedLine(1);
                 mPrinter.addCut(Printer.CUT_FEED);*/
         } catch (Exception e) {
@@ -184,26 +186,26 @@ public class ReceiptPrinter implements ReceiveListener {
 
 
     /**
-     * 打印数据
+     * Print data
      */
     private boolean printData() {
         if (mPrinter == null) {
             return false;
         }
-        //连接打印设备
+        //Connect a printing device
         if (!connectPrinter()) {
             return false;
         }
-        //当前的打印状态
+        //Current printing status
         PrinterStatusInfo status = mPrinter.getStatus();
 
 //        dispPrinterWarnings(status);
 
-        //打印机不可用时弹窗提示
+        //Pop-up prompt when printer is unavailable
         if (!isPrintable(status)) {
             ShowMsg.showMsg(makeErrorMessage(status), mContext);
             try {
-                //断开
+                //disconnect
                 mPrinter.disconnect();
             } catch (Exception ex) {
                 // Do nothing
@@ -212,7 +214,7 @@ public class ReceiptPrinter implements ReceiveListener {
         }
 
         try {
-            //通过打印对象发送已经添加在mPrinter中的数据
+            //Send data already added in mPrinter via print object
             mPrinter.sendData(Printer.PARAM_DEFAULT);
         } catch (Exception e) {
             ShowMsg.showException(e, "sendData", mContext);
@@ -228,7 +230,7 @@ public class ReceiptPrinter implements ReceiveListener {
     }
 
     /**
-     * 连接打印机
+     * Connect printer
      *
      * @return
      */
@@ -240,7 +242,8 @@ public class ReceiptPrinter implements ReceiveListener {
         }
 
         try {
-            //连接 USB设备地址我的 EPSON TM-T88IV型号地址: USB:/dev/bus/usb/004/002  必须通过开启搜索设备设置连接机型
+            //Connection USB device address My EPSON TM-T88IV model address: USB:/dev/bus/usb/004/002
+            // You must connect the model by opening the search device settings
 //            mPrinter.connect(mEditTarget.getText().toString(), Printer.PARAM_DEFAULT);
             mPrinter.connect(MainActivity.getPrinterTarget(), Printer.PARAM_DEFAULT);
         } catch (Exception e) {
@@ -269,7 +272,7 @@ public class ReceiptPrinter implements ReceiveListener {
 
 
     /**
-     * 打印是否可用
+     * Whether printing is available
      */
     private boolean isPrintable(PrinterStatusInfo status) {
         if (status == null) {
@@ -288,7 +291,7 @@ public class ReceiptPrinter implements ReceiveListener {
 
 
     /**
-     * 断开当前打印
+     *  current print
      */
     private void disconnectPrinter() {
         if (mPrinter == null) {
@@ -321,7 +324,7 @@ public class ReceiptPrinter implements ReceiveListener {
     }
 
     /**
-     * 完成打印，清空命令缓冲，关闭释放打印对象
+     * Complete printing, clear the command buffer, close and release the print object
      */
     private void finalizeObject() {
         if (mPrinter == null) {
@@ -336,7 +339,7 @@ public class ReceiptPrinter implements ReceiveListener {
     }
 
     /**
-     * 错误信息
+     * Error message
      */
     private String makeErrorMessage(PrinterStatusInfo status) {
         String msg = "";
